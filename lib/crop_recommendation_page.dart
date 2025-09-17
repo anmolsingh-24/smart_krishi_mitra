@@ -1,5 +1,6 @@
 // lib/crop_recommendation_page.dart
 import 'package:flutter/material.dart';
+import 'crop_recommendation_page_output.dart';
 
 class CropRecommendationPage extends StatelessWidget {
   final TextEditingController soilController = TextEditingController();
@@ -15,7 +16,7 @@ class CropRecommendationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Crop Recommendation"),
+        title: const Text("Crop Recommendation"),
         backgroundColor: Colors.green.shade800,
       ),
       body: SingleChildScrollView(
@@ -34,12 +35,12 @@ class CropRecommendationPage extends StatelessWidget {
                       color: Colors.green.shade900,
                     ),
                   ),
-                  SizedBox(height: 8),
-                  Text(
+                  const SizedBox(height: 8),
+                  const Text(
                     "This will help you predict the best suited crop for you based on your soil and weather condition",
                     style: TextStyle(color: Colors.black87),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
                   // Input fields (blank by default)
                   _buildTextField("Enter your Soil Type", soilController),
@@ -58,31 +59,23 @@ class CropRecommendationPage extends StatelessWidget {
                   _buildTextField("Your location", locationController),
                   _buildTextField("pH level", phController),
 
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
 
                   Center(
                     child: ElevatedButton(
                       onPressed: () {
-                        // prototype-only action
-                        showDialog(
-                          context: context,
-                          builder: (_) => AlertDialog(
-                            title: Text("Form Submitted"),
-                            content: Text(
-                              "Prototype only — no backend connected.",
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: Text("OK"),
-                              ),
-                            ],
+                        // Navigate to output page
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                const CropRecommendationPageOutput(),
                           ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green.shade800,
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 40,
                           vertical: 14,
                         ),
@@ -90,7 +83,7 @@ class CropRecommendationPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         "Submit",
                         style: TextStyle(
                           color: Colors.white,

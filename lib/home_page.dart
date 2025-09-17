@@ -4,6 +4,8 @@ import 'crop_recommendation_page.dart';
 import 'feedback_help_page.dart';
 import 'news_page.dart';
 import 'weather_page.dart';
+import 'my_farm_data_page.dart';
+import 'compare_loans.dart';
 
 const List<Map<String, dynamic>> featureList = [
   {'icon': Icons.show_chart, 'label': 'Crop Market Prices'},
@@ -159,12 +161,12 @@ class _SuggestionArea extends StatefulWidget {
 }
 
 class _SuggestionAreaState extends State<_SuggestionArea> {
-  final List<String> imageUrls = [
-    'https://picsum.photos/id/1018/200/130',
-    'https://picsum.photos/id/1015/200/130',
-    'https://picsum.photos/id/1020/200/130',
-    'https://picsum.photos/id/1035/200/130',
-    'https://picsum.photos/id/1041/200/130',
+  final List<String> imageAssets = [
+    'assets/images/crousal1.png',
+    'assets/images/crousal2.png',
+    'assets/images/crousal3.png',
+    'assets/images/crousal4.png',
+    'assets/images/crousal5.png',
   ];
 
   late PageController _pageController;
@@ -173,22 +175,25 @@ class _SuggestionAreaState extends State<_SuggestionArea> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(viewportFraction: 0.36);
+    // Use a larger viewportFraction so cards are visible clearly
+    _pageController = PageController(viewportFraction: 0.85);
     _startAutoScroll();
   }
 
-  void _startAutoScroll() {
-    Future.delayed(Duration(seconds: 5), () {
-      if (_pageController.hasClients) {
-        _currentPage = (_currentPage + 1) % imageUrls.length;
-        _pageController.animateToPage(
-          _currentPage,
-          duration: Duration(milliseconds: 600),
-          curve: Curves.easeInOut,
-        );
-        _startAutoScroll();
-      }
-    });
+  void _startAutoScroll() async {
+    // simple recurring delay-based auto-scroll that stops if the widget is disposed
+    await Future.delayed(Duration(seconds: 5));
+    if (!mounted) return;
+    if (_pageController.hasClients) {
+      _currentPage = (_currentPage + 1) % imageAssets.length;
+      _pageController.animateToPage(
+        _currentPage,
+        duration: Duration(milliseconds: 600),
+        curve: Curves.easeInOut,
+      );
+    }
+    // schedule next
+    if (mounted) _startAutoScroll();
   }
 
   @override
@@ -200,20 +205,46 @@ class _SuggestionAreaState extends State<_SuggestionArea> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 130,
-      decoration: BoxDecoration(
-        color: Colors.grey[400],
-        borderRadius: BorderRadius.circular(28),
-      ),
+      height: 160,
+      padding: EdgeInsets.symmetric(vertical: 8),
       child: PageView.builder(
         controller: _pageController,
-        itemCount: imageUrls.length,
+        itemCount: imageAssets.length,
+        onPageChanged: (index) => setState(() => _currentPage = index),
         itemBuilder: (context, index) {
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 8),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image.network(imageUrls[index], fit: BoxFit.cover),
+              borderRadius: BorderRadius.circular(16),
+              child: Image.asset(
+                imageAssets[index],
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+                errorBuilder: (context, error, stackTrace) {
+                  // helpful fallback so you can see if path/asset registration failed
+                  return Container(
+                    color: Colors.grey[300],
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.broken_image,
+                            size: 36,
+                            color: Colors.grey[700],
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            'Image not found',
+                            style: TextStyle(color: Colors.grey[700]),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           );
         },
@@ -273,6 +304,16 @@ class _GridFeatures extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => WeatherPage()),
+                  );
+                } else if (label == 'my farm data') {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => MyFarmDataPage()),
+                  );
+                } else if (label == 'compare loans') {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => CompareLoansPage()),
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
